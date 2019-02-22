@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Northwind.Domain.Entities;
 using Northwind.Persistence;
 using Xunit;
@@ -36,11 +37,11 @@ namespace Northwind.Application.Tests.Managers
             var employee = await _context.Employees.FindAsync(command.EmployeeId);
 
             // Assert
-            Assert.Equal(employee.ReportsTo, command.ManagerId);
+            employee.ReportsTo.Should().Be(command.ManagerId);
         }
 
         [Fact]
-        public Task ShouldFailForNonExistingManager()
+        public void ShouldFailForNonExistingManager()
         {
             // Arrange
             var command = new ChangeEmployeeReportToCommand
@@ -50,12 +51,12 @@ namespace Northwind.Application.Tests.Managers
             };
 
             // Act + Assert
-            return Assert.ThrowsAsync<ArgumentException>(() =>
-                _commandHandler.Handle(command, CancellationToken.None));
+            Func<Task> action = async () => await _commandHandler.Handle(command, CancellationToken.None);
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
-        public Task ShouldNotBeManagerOfItself()
+        public void ShouldNotBeManagerOfItself()
         {
             // Arrange
             var command = new ChangeEmployeeReportToCommand
@@ -65,8 +66,8 @@ namespace Northwind.Application.Tests.Managers
             };
 
             // Act + Assert
-            return Assert.ThrowsAsync<ArgumentException>(() =>
-                _commandHandler.Handle(command, CancellationToken.None));
+            Func<Task> action = async () => await _commandHandler.Handle(command, CancellationToken.None);
+            action.Should().Throw<ArgumentException>();
         }
 
         private NorthwindDbContext InitAndGetDbContext()

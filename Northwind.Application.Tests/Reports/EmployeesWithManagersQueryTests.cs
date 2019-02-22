@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Northwind.Persistence;
 using Xunit;
 
@@ -20,10 +21,10 @@ namespace Northwind.Application.Tests.Reports
                 var queryHandler = new EmployeesWithManagersQueryHandler(context);
                 var result = await queryHandler.Handle(query, CancellationToken.None);
 
-                Assert.NotEmpty(result);
-                Assert.Equal(8, result.Count());
-                Assert.Contains(result, r => r.ManagerTitle == "Vice President, Sales");
-                Assert.DoesNotContain(result, r => r.EmployeeTitle == "Vice President, Sales");
+                result.Should().NotBeEmpty();
+                result.Should().HaveCount(8);
+                result.Should().Contain(r => r.ManagerTitle == "Vice President, Sales");
+                result.Should().NotContain(r => r.EmployeeTitle == "Vice President, Sales");
             }
         }
     }

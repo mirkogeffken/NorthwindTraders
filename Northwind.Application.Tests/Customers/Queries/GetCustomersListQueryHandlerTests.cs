@@ -5,6 +5,7 @@ using Northwind.Persistence;
 using Shouldly;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace NorthwindTraders.Application.UnitTests.Infrastructure
@@ -28,9 +29,8 @@ namespace NorthwindTraders.Application.UnitTests.Infrastructure
 
             var result = await sut.Handle(new GetCustomersListQuery(), CancellationToken.None);
 
-            result.ShouldBeOfType<CustomersListViewModel>();
-
-            result.Customers.Count.ShouldBe(3);
+            result.Should().BeOfType<CustomersListViewModel>();
+            result.Customers.Should().HaveCount(3);
         }
     }
 }
