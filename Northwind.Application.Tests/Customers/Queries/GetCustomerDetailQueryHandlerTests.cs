@@ -4,6 +4,7 @@ using Northwind.Persistence;
 using Shouldly;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Northwind.Application.Tests.Customers.Queries
@@ -18,14 +19,15 @@ namespace Northwind.Application.Tests.Customers.Queries
             _context = fixture.Context;
         }    
 
+        [Fact]
         public async Task GetCustomerDetail()
         {
             var sut = new GetCustomerDetailQueryHandler(_context);
 
             var result = await sut.Handle(new GetCustomerDetailQuery { Id = "JASON" }, CancellationToken.None);
 
-            result.ShouldBeOfType<CustomerDetailModel>();
-            result.Id.ShouldBe("JASON");
+            result.Should().BeOfType<CustomerDetailModel>();
+            result.Id.Should().Be("JASON");
         }
     }
 }

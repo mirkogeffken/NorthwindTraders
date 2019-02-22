@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Northwind.Domain.Exceptions;
 using Northwind.Domain.ValueObjects;
 using Xunit;
@@ -11,8 +14,8 @@ namespace Northwind.Domain.Tests.ValueObjects
         {
             var account = AdAccount.For("SSW\\Jason");
 
-            Assert.Equal("SSW", account.Domain);
-            Assert.Equal("Jason", account.Name);
+            account.Domain.Should().Be("SSW");
+            account.Name.Should().Be("Jason");
         }
 
         [Fact]
@@ -22,7 +25,7 @@ namespace Northwind.Domain.Tests.ValueObjects
 
             var account = AdAccount.For(value);
 
-            Assert.Equal(value, account.ToString());
+            account.ToString().Should().Be(value);
         }
 
         [Fact]
@@ -34,7 +37,7 @@ namespace Northwind.Domain.Tests.ValueObjects
 
             string result = account;
 
-            Assert.Equal(value, result);
+            result.Should().Be(value);
         }
 
         [Fact]
@@ -42,14 +45,15 @@ namespace Northwind.Domain.Tests.ValueObjects
         {
             var account = (AdAccount) "SSW\\Jason";
 
-            Assert.Equal("SSW", account.Domain);
-            Assert.Equal("Jason", account.Name);
+            account.Domain.Should().Be("SSW");
+            account.Name.Should().Be("Jason");
         }
 
         [Fact]
         public void ShouldThrowAdAccountInvalidExceptionForInvalidAdAccount()
         {
-            Assert.Throws<AdAccountInvalidException>(() => (AdAccount) "SSWJason");
+            Func<AdAccount> action = () => (AdAccount) "SSWJason";
+            action.Should().Throw<AdAccountInvalidException>();
         }
     }
 }
